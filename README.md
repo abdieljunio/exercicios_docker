@@ -79,4 +79,63 @@ echo "Fim dos logs do sistema."
 #### 1º Passo: Listar todos os containers incluindo os que estão parados -> `docker ps -a`
 #### 2° Passo: Parar um container -> `docker stop <nome ou id do container>`
 #### 3° Paso: Remover um container (só épossível remover containers parados) -> `docker rm <nome ou id do container`  
-Obs.: No ID do container pode ser utilizados apenas os 3 primeiros digitos.
+Obs.: No ID do container pode ser utilizados apenas os 3 primeiros digitos.  
+## 3.Crie um Dockerfile para uma aplicação Flask que retorna uma mensagem ao acessar um endpoint.
+#### 1º Passo: Crie um diretório para a aplicação e acesse-o:
+```
+mkdir flask-app
+cd flask-app
+```
+#### 2º Passo: Crie o arquivo app.py e coloque o conteúdo abaixo:
+`nano app.py`  
+Use o seguinte código dentro do arquivo:
+  
+```
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+    return "Hello world!"
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
+
+```
+#### 3º Passo: Crie o arquivo de dependências(requirements.txt)
+`nano requirements.txt`  
+Adicione as seguintes dependências:  
+```
+Flask==2.0.1
+Werkzeug==2.0.3
+```
+
+#### 4º Passo: Crie o Dockerfile
+`nano Dockerfile`  
+Coloque o seguinte conteúdo: 
+```
+# Usando uma imagem base do Python
+FROM python:3.9-slim
+
+# Definir diretório de trabalho dentro do container
+WORKDIR /app
+
+# Copiar os arquivos para o container
+COPY . .
+
+# Instalar as dependências
+RUN pip install -r requirements.txt
+
+# Expor a porta 5000
+EXPOSE 5000
+
+# Comando para rodar a aplicação
+CMD ["python", "app.py"]
+```
+#### 5º Passo: Construa a imagem do container
+`docker build -t flask-app .`
+#### 6º Passo: Executar o container:
+`docker run -p 5000:5000 flask-app`
+#### 7º Passo: Abra o navegador e acesse
+`http://localhost:5000`
