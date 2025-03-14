@@ -74,3 +74,9 @@ echo "Fim dos logs do sistema."
 #### 6º Passo: Torne o script executável através do comadno `chmod +x log_script.sh`.
 #### 7° Passo: Execute o script `./log_script.sh`
 #### 8° Passo: Saia do container com o comando `exit`
+
+## 3.Listando e removendo containers liste todos os containers em execução e parados, pare um container em execução e remova um container específico.
+#### 1º Passo: Listar todos os containers incluindo os que estão parados -> `docker ps -a`
+#### 2° Passo: Parar um container -> `docker stop <nome ou id do container>`
+#### 3° Paso: Remover um container (só épossível remover containers parados) -> `docker rm <nome ou id do container`  
+Obs.: No ID do container pode ser utilizados apenas os 3 primeiros digitos.
