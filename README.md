@@ -52,4 +52,25 @@ EXPOSE 80
 Execute os seguintes comandos:  
 `docker build -t meu_site_nginx .`: para construir a imagem docker.   
 `docker run -d -p 8080:80 meu_site_nginx` : para executar o container.  
-#### 4º Passo: Abra o navegador e acesse `http://localhost:8080` para ver a pàgina criada.
+#### 4º Passo: Abra o navegador e acesse `http://localhost:8080` para ver a pàgina criada.  
+
+## 2. Criando e rodando um container interativo, inicie um container Ubuntu e interaja com o terminal dele.
+#### 1º Passo: Utilize o comando `docker pull ubuntu` para baixar a imagem mais recente do Ubuntu
+#### 2° Passo: Utilize o comando `docker run -it --privileged ubuntu` para acessar o container de forma iterativa e ter acesso privilegiado ao container
+#### 4° Passo: Utilize os comando `apt-get update` e depois `apt-get install nano`. Para buscar versões mais recentes dos pacotes e para instalar o editor de texto nano.
+#### 5º Psso: Use o coamdno `nano log_script.sh` para criar um script e utilize o seguinte conteúdo para mostrar os logs do sistema.
+```
+#!/bin/bash
+# Script para imprimir logs do sistema
+
+echo "Exibindo logs do sistema:"
+
+# Exibindo as últimas 10 mensagens do log do sistema
+dmesg | tail -n 10
+
+echo "Fim dos logs do sistema."
+
+```
+#### 6º Passo: Torne o script executável através do comadno `chmod +x log_script.sh`.
+#### 7° Passo: Execute o script `./log_script.sh`
+#### 8° Passo: Saia do container com o comando `exit`
