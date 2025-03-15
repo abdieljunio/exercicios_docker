@@ -139,3 +139,108 @@ CMD ["python", "app.py"]
 `docker run -p 5000:5000 flask-app`
 #### 7º Passo: Abra o navegador e acesse
 `http://localhost:5000`
+## 5.Criando e utilizando volumes para persistência de dados.
+#### 1º Passo: Criar e acessar o diretório do projeto.
+`mkdir laravel-breeze-mysql`  
+`cd laravel-breeze-mysql`  
+#### 2º Passo: crie o  arquivo docker-compose-yml.  
+`nano docker-compose-yml`  
+Com o seguinte conteúdo:  
+```
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: laravel_db
+      MYSQL_USER: laravel_user
+      MYSQL_PASSWORD: laravel_password
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - laravel_network
+
+  laravel:
+    image: laravelphp/php-fpm
+    container_name: laravel-container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "9000:9000"
+    depends_on:
+      - mysql
+    networks:
+      - laravel_network
+
+volumes:
+  mysql-data:
+    driver: local
+
+networks:
+  laravel_network:
+    driver: bridge
+
+```
+#### 3º Passo: criar o Dockerfile  
+`nano Dockerfile`  
+Com o seguinte conteúdo:
+```
+FROM php:8.0-fpm
+
+# Instalar dependências do PHP e extensões necessárias
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    zip \
+    git \
+    libicu-dev \
+    curl \
+    gnupg2 \
+    lsb-release \
+    ca-certificates \
+    apt-transport-https
+
+# Instalar o Node.js e o npm
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
+    apt-get install -y nodejs
+
+# Instalar o Composer (gerenciador de dependências do Laravel)
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Definir diretório de trabalho
+WORKDIR /var/www/html
+
+```
+#### 4º Passo: Criar e subir o container.  
+- Construir imagem: `docker-compose build`  
+- Subir os containers: `docker-compose up -d`  
+
+#### 5º Passo: Instalar o Laravel.
+Entre no container Laravel: `docker-compose exec laravel bash`
+Instale-o usando o composer: `composer create-project --prefer-dist laravel/laravel .`  
+#### 6º Passo: Instalar Laravel Breeze (Autenticação).  
+- Instale o pacote Laravel Breeze:`composer require laravel/breeze --dev`  
+- Escolher a stack para o Laravel Breeze: `php artisan breeze:install`  
+- Instalar dependências do npm: `npm install`  
+- Compile os assets com o npm: `npm run dev`
+#### 7º Passo: Configurar o Banco de Dados MySQL.
+- Abra o arquivo .env do Laravel e faça as seguuintes configurações:
+```
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=laravel_db
+DB_USERNAME=laravel_user
+DB_PASSWORD=laravel_password
+
+```
+- Execute as migrações: `php artisan migrate`
+#### 7º Passo: Testar a aplicação.
+- abra o navegador e digite: `http://localhost:9000`
